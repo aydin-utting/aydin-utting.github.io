@@ -1,0 +1,8 @@
+body {
+  font-family: sans-serif;
+}
+main {
+  max-width: 65ch;
+  margin-right: auto;
+  margin-left: auto;
+}
