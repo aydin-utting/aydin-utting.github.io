@@ -1,13 +1,121 @@
-<head>
-  <title>utt.ing</title>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width" />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <main>
-    <h1>utt.ing</h1>
-    <p>This Aydin Utting's website</p>
-    <p>It's a work in progress.</p>
-  </main>
-</body>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>utt.ing</title>
+    <style>
+      html {
+        background: repeating-conic-gradient(
+            #662000 0 0.00012%,
+            #af3800 0.05deg 0.00029%
+          )
+          0 0%/3000px 5000px;
+      }
+      main {
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-family: monospace;
+      }
+
+      #spinning-div {
+        width: max-content;
+        height: min(100dvh, 400px);
+        transform-style: preserve-3d;
+        transform: rotateX(0deg) rotateY(0deg);
+        transition: transform 0.1s;
+        background-color: #85ebff;
+        border-radius: 1rem;
+        border: 2px solid black;
+        width: 32ch;
+        padding: 1.25rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div id="spinning-div">
+        <div id="inner-1">
+          <h1>/utt.ing/</h1>
+          <p>I'm Aydin and this is my website haha</p>
+          <p>It's definitely a WIP</p>
+        </div>
+      </div>
+    </main>
+    <footer></footer>
+    <script>
+      const spinningDiv = document.getElementById("spinning-div");
+      let isDragging = false;
+      let previousX = 0;
+      let previousY = 0;
+      let rotationX = 0;
+      let rotationY = 0;
+      let velocityX = 0;
+      let velocityY = 0;
+      let momentumInterval;
+
+      const onPointerDown = (clientX, clientY) => {
+        isDragging = true;
+        previousX = clientX;
+        previousY = clientY;
+        clearInterval(momentumInterval); // Stop any momentum
+      };
+      spinningDiv.addEventListener("mousedown", (e) =>
+        onPointerDown(e.clientX, e.clientY)
+      );
+      spinningDiv.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        onPointerDown(e.touches[0].clientX, e.touches[0].clientY);
+      });
+
+      const onPointerMove = (clientX, clientY) => {
+        if (!isDragging) return;
+
+        const deltaX = clientX - previousX;
+        const deltaY = clientY - previousY;
+
+        velocityX = deltaX * 0.5;
+        velocityY = deltaY * 0.5;
+
+        rotationY += deltaX * 0.5;
+        rotationX -= deltaY * 0.5;
+
+        spinningDiv.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
+
+        previousX = clientX;
+        previousY = clientY;
+      };
+      document.addEventListener("mousemove", (e) => {
+        onPointerMove(e.clientX, e.clientY);
+      });
+      document.addEventListener("touchmove", (e) => {
+        // e.preventDefault();
+        onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
+      });
+
+      const onPointerUp = () => {
+        isDragging = false;
+
+        momentumInterval = setInterval(() => {
+          rotationY += velocityX;
+          rotationX -= velocityY;
+
+          velocityX *= 0.95;
+          velocityY *= 0.95;
+
+          spinningDiv.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
+
+          if (Math.abs(velocityX) < 0.01 && Math.abs(velocityY) < 0.01) {
+            clearInterval(momentumInterval);
+          }
+        }, 16);
+      };
+      document.addEventListener("mouseup", onPointerUp);
+      document.addEventListener("touchend", onPointerUp);
+    </script>
+  </body>
+</html>
